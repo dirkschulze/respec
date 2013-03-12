@@ -418,10 +418,16 @@ define(
                 var match;
 
                 // ATTRIBUTE
-                match = /^\s*(?:(readonly)\s+)?attribute\s+(.*?)\s+(\S+)\s*$/.exec(str);
+                match = /^\s*(?:(readonly|inherit|stringifier)\s+)?attribute\s+(.*?)\s+(\S+)\s*$/.exec(str);
                 if (match) {
                     obj.type = "attribute";
-                    obj.readonly = (match[1] === "readonly");
+                    //if (match[1])
+                    //    obj.declaration = match[1] + (new Array(12-match[1].length)).join(" "); // fill string with spaces
+                    //else
+                    //    obj.declaration = (new Array(12)).join(" ");
+
+                    obj.declaration = match[1] ? match[1] : "";
+                    obj.declaration += (new Array(12-obj.declaration.length)).join(" "); // fill string with spaces
                     var type = match[2];
                     this.parseDatatype(obj, type);
                     this.setID(obj, match[3]);
@@ -936,7 +942,7 @@ define(
                                     else {
                                         sn.element("a", {}, span, it.isUnionType ? "(" + it.datatype.join(" or ") + ")" : it.datatype);
                                     }
-                                    if (it.readonly) sn.text(", readonly", dt);
+                                    if (it.declaration) sn.text(", " + it.declaration, dt);
                                     if (it.nullable) sn.text(", nullable", dt);
 
                                     if (this.conf.idlOldStyleExceptions && it.raises.length) {
@@ -1097,7 +1103,7 @@ define(
                         if (it.type == "attribute") maxAttr = (len > maxAttr) ? len : maxAttr;
                         else if (it.type == "method") maxMeth = (len > maxMeth) ? len : maxMeth;
                         else if (it.type == "constant") maxConst = (len > maxConst) ? len : maxConst;
-                        if (it.type == "attribute" && it.readonly) hasRO = true;
+                        if (it.type == "attribute" && it.declaration) hasRO = true;
                     });
                     var curLnk = "widl-" + obj.refId + "-"
                     ,   self = this
@@ -1211,13 +1217,13 @@ define(
                 if (attr.nullable) pad = pad - 1;
                 if (attr.array) pad = pad - (2 * attr.arrayCount);
                 return idlAttributeTmpl({
-                    obj:        attr
-                ,   indent:     indent
-                ,   readonly:   attr.readonly ? "readonly" : "        "
-                ,   pad:        pad
-                ,   arr:        arrsq(attr)
-                ,   nullable:   attr.nullable ? "?" : ""
-                ,   href:       curLnk + attr.refId
+                    obj:            attr
+                ,   indent:         indent
+                ,   declaration:    attr.declaration
+                ,   pad:            pad
+                ,   arr:            arrsq(attr)
+                ,   nullable:       attr.nullable ? "?" : ""
+                ,   href:           curLnk + attr.refId
                 });
             },
 
