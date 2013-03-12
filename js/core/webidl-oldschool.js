@@ -421,11 +421,6 @@ define(
                 match = /^\s*(?:(readonly|inherit|stringifier)\s+)?attribute\s+(.*?)\s+(\S+)\s*$/.exec(str);
                 if (match) {
                     obj.type = "attribute";
-                    //if (match[1])
-                    //    obj.declaration = match[1] + (new Array(12-match[1].length)).join(" "); // fill string with spaces
-                    //else
-                    //    obj.declaration = (new Array(12)).join(" ");
-
                     obj.declaration = match[1] ? match[1] : "";
                     obj.declaration += (new Array(12-obj.declaration.length)).join(" "); // fill string with spaces
                     var type = match[2];
